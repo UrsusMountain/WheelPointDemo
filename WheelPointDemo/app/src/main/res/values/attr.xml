@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="point_radius" format="dimension"/>
+    <attr name="point_gap" format="dimension"/>
+    <declare-styleable name="wheelPointView">
+        <attr name="point_radius"/>
+        <attr name="point_gap"/>
+    </declare-styleable>
+</resources>
