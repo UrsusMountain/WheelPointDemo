@@ -12,6 +12,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+/**
+ * Author:  ursus
+ * Date:    16/9/5
+ * Function:
+ */
 public class WheelPointView extends View {
 
     public final static int SCROLL_MODE_NORMAL = 0;
@@ -64,7 +69,7 @@ public class WheelPointView extends View {
         float hScale = 1;
         float scale;
 
-        if (widthMode != MeasureSpec.UNSPECIFIED && widthSize < wantHeight) {
+        if (widthMode != MeasureSpec.UNSPECIFIED && widthSize < wantWidth) {
             hScale = (float) widthSize / wantWidth;
         }
         if (heightMode != MeasureSpec.UNSPECIFIED && heightSize < wantHeight) {
