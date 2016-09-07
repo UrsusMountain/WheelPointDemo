@@ -1,6 +1,7 @@
 package com.ursus.wheelpointdemo;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,8 +19,8 @@ public class WheelPointView extends View {
 
     private int mWidth;
     private int mHeight;
-    private int mPointRadius;
-    private int mPointGap;
+    private float mPointRadius;
+    private float mPointGap;
     private int mPointCount;
     private int mRealWidth;
 
@@ -40,19 +41,57 @@ public class WheelPointView extends View {
 
     public WheelPointView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mPointCount = 5;
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.wheelPointView, defStyleAttr, 0);
+        mPointRadius = typedArray.getDimension(R.styleable.wheelPointView_point_radius, 0.0f);
+        mPointGap = typedArray.getDimension(R.styleable.wheelPointView_point_gap, 0.0f);
+        mPointCount = typedArray.getInt(R.styleable.wheelPointView_point_count, 0);
         mMode = SCROLL_MODE_NORMAL;
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        float wantWidth = mPointCount * (mPointGap + mPointRadius * 2);
+        float wantHeight = mPointRadius * 2.5f;
+
+        float wScale = 1;
+        float hScale = 1;
+        float scale;
+
+        if (widthMode != MeasureSpec.UNSPECIFIED && widthSize < wantHeight) {
+            hScale = (float) widthSize / wantWidth;
+        }
+        if (heightMode != MeasureSpec.UNSPECIFIED && heightSize < wantHeight) {
+            wScale = (float) heightSize / wantHeight;
+        }
+
+        scale = Math.min(wScale, hScale);
+
+        setMeasuredDimension(
+                resolveSizeAndState((int) (wantWidth * scale), widthMeasureSpec, 0),
+                resolveSizeAndState((int) (wantHeight * scale), heightMeasureSpec, 0)
+        );
+
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         this.mWidth = w;
         this.mHeight = h;
-        mPointGap = Math.min(mWidth / (mPointCount * 2), mHeight);
-        mPointRadius = mPointGap / 2;
-        mRealWidth = mPointCount * (mPointRadius * 2 + mPointGap);
+        float wantWidth = mPointCount * (mPointGap + mPointRadius * 2);
+        if (wantWidth > mWidth) {
+            float scale = (float) mWidth / wantWidth;
+            mPointRadius = mPointRadius * scale;
+            mPointGap = mPointGap * scale;
+        }
+        mRealWidth = (int) (mPointCount * (mPointRadius * 2 + mPointGap));
     }
 
     @Override
@@ -74,7 +113,7 @@ public class WheelPointView extends View {
 
         switch (mMode) {
             case SCROLL_MODE_NORMAL:
-                drawNormal(canvas,xPos);
+                drawNormal(canvas, xPos);
                 break;
             case SCROLL_MODE_VISCOSITY:
                 drawViscosity(canvas, xPos);
@@ -123,7 +162,7 @@ public class WheelPointView extends View {
         this.mMode = mMode;
     }
 
-    public int getMode(){
+    public int getMode() {
         return mMode;
     }
 

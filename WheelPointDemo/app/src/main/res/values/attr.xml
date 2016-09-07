@@ -2,8 +2,11 @@
 <resources>
     <attr name="point_radius" format="dimension"/>
     <attr name="point_gap" format="dimension"/>
+    <attr name="point_count" format = "integer"/>
+
     <declare-styleable name="wheelPointView">
         <attr name="point_radius"/>
         <attr name="point_gap"/>
+        <attr name="point_count"/>
     </declare-styleable>
 </resources>
